@@ -1,0 +1,14 @@
+{
+  "listen_addr": ":8080",
+  "data_dir": "./data",
+  "acme_email": "admin@abcd.com",
+  "acme_server": "staging",
+  "jwt_secret": "change-this-to-a-random-secret-in-production",
+  "token_expiry_hours": 24,
+  "accounts": [
+    {
+      "username": "admin",
+      "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
+    }
+  ]
+}
