@@ -1,84 +1,56 @@
 <template>
-  <div class="login-wrapper min-h-screen flex flex-col items-center justify-center bg-slate-100 p-4 relative overflow-hidden">
-    <!-- Sophisticated Abstract Background -->
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute -top-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-blue-200/40 blur-[120px]"></div>
-        <div class="absolute -bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-indigo-200/40 blur-[120px]"></div>
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-    </div>
-
-    <!-- Login Container -->
-    <div class="w-full max-w-[400px] relative z-10 animate-in">
-      <!-- Logo Header -->
-      <div class="flex flex-col items-center gap-4 mb-10">
-        <div class="w-16 h-16 rounded-2xl bg-white text-blue-600 flex items-center justify-center shadow-xl border border-slate-200">
-          <ShieldCheck :size="32" stroke-width="2.2" />
+  <div class="login-page">
+    <div class="login-card">
+      <!-- Logo -->
+      <div class="login-header">
+        <div class="logo">
+          <ShieldCheck :size="32" />
         </div>
-        <div class="text-center">
-          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-            ACME <span class="text-blue-600 font-black">Node</span>
-          </h1>
-          <p class="text-sm text-slate-600 font-semibold tracking-wide mt-1 italic">Enterprise SSL Management</p>
-        </div>
+        <h1>ACME Manager</h1>
+        <p>SSL Certificate Management</p>
       </div>
 
-      <!-- Modern Tech Card -->
-      <div class="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-200 p-8 sm:p-10 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600"></div>
-        
-        <form @submit.prevent="handleLogin" class="space-y-6">
-          
-          <div class="space-y-2">
-            <label for="username" class="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">Username</label>
-            <div class="relative flex items-center group">
-              <User :size="18" class="absolute left-4 text-slate-500 group-focus-within:text-blue-600 transition-colors" />
-              <input 
-                v-model="username" 
-                id="username" 
-                type="text" 
-                placeholder="Username"
-                class="w-full h-13 bg-slate-50 border border-slate-300 text-slate-900 pl-12 pr-4 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
-                required
-              />
-            </div>
+      <!-- Form -->
+      <form @submit.prevent="handleLogin" class="login-form">
+        <div class="form-group">
+          <label>Username</label>
+          <div class="input-wrapper">
+            <User :size="20" class="input-icon" />
+            <input 
+              v-model="username" 
+              type="text" 
+              placeholder="Username"
+              required
+            />
           </div>
+        </div>
 
-          <div class="space-y-2">
-            <label for="password" class="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">Password</label>
-            <div class="relative flex items-center group">
-              <Lock :size="18" class="absolute left-4 text-slate-500 group-focus-within:text-blue-600 transition-colors" />
-              <input 
-                v-model="password" 
-                id="password" 
-                type="password" 
-                placeholder="Password"
-                class="w-full h-13 bg-slate-50 border border-slate-300 text-slate-900 pl-12 pr-4 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all placeholder:text-slate-500 font-medium text-sm"
-                required
-              />
-            </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrapper">
+            <Lock :size="20" class="input-icon" />
+            <input 
+              v-model="password" 
+              type="password" 
+              placeholder="Password"
+              required
+            />
           </div>
+        </div>
 
-          <div v-if="error" class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-3 font-semibold">
-            <AlertCircle :size="16" class="shrink-0" />
-            <span>{{ error }}</span>
-          </div>
+        <div v-if="error" class="error-message">
+          <AlertCircle :size="18" />
+          {{ error }}
+        </div>
 
-          <button 
-            type="submit" 
-            :disabled="loading"
-            class="w-full h-13 bg-blue-700 hover:bg-blue-800 active:scale-[0.98] text-white font-bold text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_8px_20px_rgba(29,78,216,0.3)] hover:shadow-[0_12px_24px_rgba(29,78,216,0.4)] flex items-center justify-center gap-3 disabled:opacity-50"
-          >
-            <Loader2 v-if="loading" class="animate-spin" :size="18" />
-            <span v-else>Login</span>
-          </button>
-        </form>
-      </div>
+        <button type="submit" :disabled="loading" class="login-btn">
+          <Loader2 v-if="loading" :size="20" class="spin" />
+          <span v-else>Login</span>
+        </button>
+      </form>
 
-      <!-- Compact Footer -->
-      <div class="mt-8 text-center">
-        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] opacity-90">
-          Node_Security_Protocol // v1.0.4
-        </p>
+      <div class="login-footer">
+        v1.0.0
       </div>
     </div>
   </div>
@@ -104,7 +76,7 @@ const handleLogin = async () => {
     await authStore.login(username.value, password.value)
     router.push({ name: 'Dashboard' })
   } catch (err: any) {
-    error.value = err.response?.data?.error || 'Denied'
+    error.value = err.response?.data?.error || 'Login failed'
   } finally {
     loading.value = false
   }
@@ -112,16 +84,166 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-wrapper {
-  font-family: ui-sans-serif, system-ui, sans-serif;
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+  padding: 20px;
 }
 
-.animate-in {
-  animation: enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.login-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-@keyframes enter {
-  from { opacity: 0; transform: scale(0.98) translateY(2px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+
+.login-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+
+.login-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.input-wrapper input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 44px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #1f2937;
+  background: #f9fafb;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.input-wrapper input::placeholder {
+  color: #9ca3af;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.login-btn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 12px;
+  color: #9ca3af;
 }
 </style>
