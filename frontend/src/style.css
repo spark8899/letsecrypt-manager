@@ -1,0 +1,37 @@
+:root {
+  --primary-color: #3b82f6;
+  --bg-color: #f9fafb;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: #1f2937;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.p-button {
+  border-radius: 8px;
+}
+
+.p-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}

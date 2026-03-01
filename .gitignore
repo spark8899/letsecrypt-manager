@@ -1,12 +1,35 @@
-data
-
-# Editor folders and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# General
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.idea/
+.vscode/
+*.swp
+*.swo
+*.log
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+config.json
+backend/config.json
+
+# Backend (Go)
+/letsencrypt-manager
+/letsencrypt-manager.exe
+/backend/data/
+/backend/vendor/
+/backend/coverage.out
+/backend/coverage.html
+
+# Frontend (Node/Vue)
+/frontend/node_modules/
+/frontend/dist/
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/.pnpm-debug.log*
+/frontend/.vscode/
+
+# Build artifacts
+dist/
+bin/

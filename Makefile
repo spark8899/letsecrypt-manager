@@ -1,79 +1,69 @@
-.PHONY: build run deps clean hash-password test test-verbose test-cover
+# Main Makefile for LetsEncrypt Manager
 
-# Build the binary
-build:
-	go build -o letsencrypt-manager .
+.PHONY: all install run run-backend run-frontend build build-backend build-frontend clean test test-backend help
 
-# Download dependencies
-deps:
-	go mod tidy
-	go mod download
+# Default target
+all: help
 
-# Run in development mode
+# Install all dependencies
+install:
+	@echo "Installing backend dependencies..."
+	cd backend && go mod tidy && go mod download
+	@echo "Installing frontend dependencies..."
+	cd frontend && npm install
+
+# Run backend in development
+run-backend:
+	cd backend && go run main.go config.json
+
+# Run frontend in development
+run-frontend:
+	cd frontend && npm run dev
+
+# Run both frontend and backend concurrently
 run:
-	go run . config.json
+	@echo "Starting backend and frontend..."
+	(cd backend && go run main.go config.json) & (cd frontend && npm run dev)
 
-# Clean build artifacts
-clean:
-	rm -f letsencrypt-manager
-	rm -rf data/
+# Build both frontend and backend
+build: build-frontend build-backend
 
-# Run all tests
-test:
-	go test ./... -count=1 -timeout 30s
+build-backend:
+	@echo "Building backend binary..."
+	cd backend && go build -o ../letsencrypt-manager .
 
-# Run tests with verbose output
-test-verbose:
-	go test ./... -v -count=1 -timeout 30s
+build-frontend:
+	@echo "Building frontend assets..."
+	cd frontend && npm run build
 
-# Run tests with coverage report
-test-cover:
-	go test ./... -count=1 -timeout 30s -coverprofile=coverage.out
-	go tool cover -html=coverage.out -o coverage.html
-	@echo "Coverage report: coverage.html"
-
-# Run tests for a specific package
-# Usage: make test-pkg PKG=./handlers
-test-pkg:
-	go test $(PKG) -v -count=1 -timeout 30s
-
-# Run tests with race detector
-test-race:
-	go test ./... -race -count=1 -timeout 60s
+# Run backend tests
+test-backend:
+	cd backend && go test ./... -v
 
 # Generate sha256 password hash
 # Usage: make hash-password PASSWORD=yourpassword
 hash-password:
 	@echo -n "$(PASSWORD)" | sha256sum | awk '{print $$1}'
 
-# Show API usage
+# Clean build artifacts
+clean:
+	rm -f letsencrypt-manager
+	rm -rf backend/data/
+	rm -rf frontend/dist/
+	rm -rf frontend/node_modules/
+	rm -rf backend/vendor/
+
+# Help menu
 help:
 	@echo ""
-	@echo "=== LetsEncrypt Manager API ==="
+	@echo "=== LetsEncrypt Manager Management ==="
 	@echo ""
-	@echo "1. Login:"
-	@echo '   curl -X POST http://localhost:8080/api/auth/login \'
-	@echo '     -H "Content-Type: application/json" \'
-	@echo '     -d '"'"'{"username":"admin","password":"admin123"}'"'"''
+	@echo "  make install         Install both backend and frontend dependencies"
+	@echo "  make run             Start backend and frontend in parallel"
+	@echo "  make run-backend     Start backend server only"
+	@echo "  make run-frontend    Start frontend dev server only"
+	@echo "  make build           Build both backend binary and frontend assets"
+	@echo "  make test-backend    Run all backend tests"
+	@echo "  make hash-password   Generate SHA256 hash (Usage: make hash-password PASSWORD=xyz)"
+	@echo "  make clean           Remove build artifacts and dependencies"
 	@echo ""
-	@echo "2. Add domain:"
-	@echo '   curl -X POST http://localhost:8080/api/domains \'
-	@echo '     -H "Authorization: Bearer TOKEN" \'
-	@echo '     -H "Content-Type: application/json" \'
-	@echo '     -d '"'"'{"domain":"example.com"}'"'"''
-	@echo ""
-	@echo "3. Get DNS challenge:"
-	@echo '   curl -X POST http://localhost:8080/api/domains/example.com/dns-challenge \'
-	@echo '     -H "Authorization: Bearer TOKEN"'
-	@echo ""
-	@echo "4. Verify DNS:"
-	@echo '   curl http://localhost:8080/api/domains/example.com/dns-verify \'
-	@echo '     -H "Authorization: Bearer TOKEN"'
-	@echo ""
-	@echo "5. Issue certificate:"
-	@echo '   curl -X POST http://localhost:8080/api/domains/example.com/issue \'
-	@echo '     -H "Authorization: Bearer TOKEN"'
-	@echo ""
-	@echo "6. Get certificate:"
-	@echo '   curl http://localhost:8080/api/domains/example.com/cert \'
-	@echo '     -H "Authorization: Bearer TOKEN"'
